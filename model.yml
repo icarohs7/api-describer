@@ -1,0 +1,35 @@
+---
+production_server: "https://myserver.com"
+development_server: "https://myserver.dev.com"
+notes:
+    - Notes here
+    - As many as you want
+
+endpoints:
+    -   url: /people
+        values: null
+        description: list of registered people
+        observations: some important observation
+        method: get
+        body: null
+        body_type: null
+        response: >
+            [
+                {"id": 1, "name": "Icaro", "age": 21},
+                {"id": 2, "name": "Mark", "age": 40},
+            ]
+
+    -   url: /people/{{id}}
+        values:
+            id: unique identifier of the given person
+        description: information about a specific person
+        observations: some important observation
+        method: get
+        body: null
+        body_type: null
+        response: >
+            {
+                "id": 1,
+                "name": "Icaro",
+                "age": 21
+            }

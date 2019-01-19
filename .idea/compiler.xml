@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="api-describer_buildSrc_main" target="1.8" />
+      <module name="api-describer_buildSrc_test" target="1.8" />
+      <module name="api-describer_main" target="1.8" />
+      <module name="api-describer_test" target="1.8" />
+      <module name="api_describer_buildSrc_main" target="1.8" />
+      <module name="api_describer_buildSrc_test" target="1.8" />
+      <module name="api_describer_main" target="1.8" />
+      <module name="api_describer_test" target="1.8" />
+      <module name="apidescriber_main" target="1.8" />
+      <module name="apidescriber_test" target="1.8" />
+      <module name="appjfx_main" target="1.8" />
+      <module name="appjfx_test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
