@@ -10,6 +10,12 @@ compileKotlin {
 
 dependencies {
     implementation(project(":apidescriber"))
+    implementation(Deps.coroutinesRx2)
+    implementation(Deps.koinCore)
+    implementation(Deps.kotlinStdLib)
+    implementation(Deps.rxJava2)
+    implementation(Deps.snakeYaml)
+
     implementation(Deps.coroutinesJavaFx)
     implementation(Deps.tornadoFx)
     testImplementation(TestDeps.core)

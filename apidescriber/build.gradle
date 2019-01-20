@@ -7,10 +7,10 @@ compileKotlin {
 }
 
 dependencies {
-    api(Deps.coroutinesRx2)
-    api(Deps.koinCore)
-    api(Deps.kotlinStdLib)
-    api(Deps.rxJava2)
-    api(Deps.snakeYaml)
+    implementation(Deps.coroutinesRx2)
+    implementation(Deps.koinCore)
+    implementation(Deps.kotlinStdLib)
+    implementation(Deps.rxJava2)
+    implementation(Deps.snakeYaml)
     testImplementation(TestDeps.core)
 }
