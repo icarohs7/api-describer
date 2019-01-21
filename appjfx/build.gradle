@@ -9,15 +9,18 @@ compileKotlin {
 }
 
 dependencies {
-//    implementation(project(":apidescriber"))
+    implementation(project(":apidescriber"))
     implementation(Deps.coroutinesRx2)
     implementation(Deps.koinCore)
     implementation(Deps.kotlinStdLib)
     implementation(Deps.rxJava2)
+    implementation(Deps.rxRelay)
     implementation(Deps.snakeYaml)
 
-    implementation(Deps.coroutinesJavaFx)
-    implementation(Deps.tornadoFx)
+    implementation(JavaFxDeps.coroutinesJavaFx)
+    implementation(JavaFxDeps.ikonliJavaFx)
+    implementation(JavaFxDeps.ikonliMaterialIcons)
+    implementation(JavaFxDeps.tornadoFx)
     testImplementation(TestDeps.core)
 }
 
