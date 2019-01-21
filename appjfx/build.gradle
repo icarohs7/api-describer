@@ -9,7 +9,7 @@ compileKotlin {
 }
 
 dependencies {
-    implementation(project(":apidescriber"))
+//    implementation(project(":apidescriber"))
     implementation(Deps.coroutinesRx2)
     implementation(Deps.koinCore)
     implementation(Deps.kotlinStdLib)

@@ -1,5 +1,6 @@
 package com.github.icarohs7.apidescriber.ui.view
 
+import com.github.icarohs7.apidescriber.ui.view.baseclasses.ScopedView
 import tornadofx.*
 
 class MainView : ScopedView("Api Describer") {
@@ -8,7 +9,7 @@ class MainView : ScopedView("Api Describer") {
 
         vbox {
             maxWidth = Double.MAX_VALUE
-            parentWidthProperty.addListener { _, _, newValue -> prefWidth = newValue.toDouble() * .5 }
+            parentWidthProperty.onChange { prefWidth = it * .5 }
 
             add(MetadataView())
             add(EndpointSpecView())
@@ -17,7 +18,7 @@ class MainView : ScopedView("Api Describer") {
 
         vbox {
             maxWidth = Double.MAX_VALUE
-            parentWidthProperty.addListener { _, _, newValue -> prefWidth = newValue.toDouble() * .5 }
+            parentWidthProperty.onChange { prefWidth = it * .5 }
 
             add(PreviewView())
         }
