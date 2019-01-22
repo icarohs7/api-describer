@@ -2,6 +2,7 @@ package com.github.icarohs7.apidescriber.data
 
 import com.github.icarohs7.apidescriber.data.entities.ApiSpec
 import com.github.icarohs7.apidescriber.data.entities.EndpointSpec
+import com.github.icarohs7.apidescriber.domain.extensions.valueOr
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 
@@ -27,6 +28,18 @@ fun ApiSpec.mapify(): Map<String, Any> {
             "notes" to notes,
             "endpoints" to endpoints.map(EndpointSpec::mapify)
     )
+}
+
+/**
+ * Return the next unique [Int] identifier
+ * to be used by an endpoint
+ */
+fun ApiSpec.nextEndpointSpecId(): Int {
+    return endpoints
+            .map { it.id }
+            .max()
+            .valueOr(0)
+            .plus(1)
 }
 
 /**

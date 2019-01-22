@@ -9,27 +9,32 @@ import org.koin.standalone.inject
 import tornadofx.*
 
 class MetadataView : ScopedView("Informações da api") {
-    private val spec: Property<ApiSpec> by Injector.inject("ApiSpec")
+    private val apiSpec: Property<ApiSpec> by Injector.inject("ApiSpec")
 
     override val root = form {
         fieldset("Dados da Api") {
             field("Servidor de produção") {
-                textfield(spec.bidirectionalMap(ApiSpec::productionServer) {
-                    spec.value.copy(productionServer = it)
-                })
+                textfield {
+                    bind(apiSpec.bidirectionalMap(ApiSpec::productionServer) {
+                        apiSpec.value.copy(productionServer = it)
+                    })
+                }
             }
 
             field("Servidor de desenvolvimento") {
-                textfield(spec.bidirectionalMap(ApiSpec::developmentServer) {
-                    spec.value.copy(developmentServer = it)
-                })
+                textfield {
+                    bind(apiSpec.bidirectionalMap(ApiSpec::developmentServer) {
+                        apiSpec.value.copy(developmentServer = it)
+                    })
+                }
             }
 
             field("Notas") {
-                textarea(spec.bidirectionalMap({ it.notes.joinToString("\n\n") }) {
-                    spec.value.copy(notes = it.split("\n\n"))
-                }) {
+                textarea {
                     prefRowCount = 3
+                    bind(apiSpec.bidirectionalMap({ it.notes.joinToString("\n") }) {
+                        apiSpec.value.copy(notes = it.split("\n"))
+                    })
                 }
             }
         }

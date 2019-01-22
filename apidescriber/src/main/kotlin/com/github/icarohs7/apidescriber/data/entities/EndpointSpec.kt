@@ -5,8 +5,9 @@ package com.github.icarohs7.apidescriber.data.entities
  * endpoint within an [ApiSpec]
  */
 data class EndpointSpec(
+        val id: Int = 1,
         val url: String = "",
-        val values: Map<String, String> = emptyMap(),
+        val values: String = "",
         val description: String = "",
         val observations: String = "",
         val method: String = "",
