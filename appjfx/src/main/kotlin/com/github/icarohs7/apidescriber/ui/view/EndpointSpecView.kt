@@ -1,12 +1,11 @@
 package com.github.icarohs7.apidescriber.ui.view
 
-import com.github.icarohs7.apidescriber.data.entities.ApiSpec
 import com.github.icarohs7.apidescriber.data.entities.EndpointSpec
 import com.github.icarohs7.apidescriber.data.nextEndpointSpecId
+import com.github.icarohs7.apidescriber.domain.ApiSpecAdapter
+import com.github.icarohs7.apidescriber.domain.EndpointSpecAdapter
 import com.github.icarohs7.apidescriber.domain.Injector
-import com.github.icarohs7.apidescriber.domain.extensions.bidirectionalMap
-import com.github.icarohs7.apidescriber.domain.extensions.valueOr
-import javafx.beans.property.Property
+import com.github.icarohs7.apidescriber.domain.JfxApiSpecRepository
 import javafx.geometry.Insets
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
@@ -14,14 +13,12 @@ import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.paint.Color
-import javafx.scene.paint.Paint
+import javafx.util.StringConverter
 import org.koin.standalone.inject
-import org.kordamp.ikonli.javafx.FontIcon
 import tornadofx.*
 
 class EndpointSpecView : View("Adicionar Endpoint") {
-    private val endpointSpec: Property<EndpointSpec> by Injector.inject("EndpointSpec")
-    private val apiSpec: Property<ApiSpec> by Injector.inject("ApiSpec")
+    private val apiSpecRepository: JfxApiSpecRepository by Injector.inject()
 
     override val root = form {
         fieldset("Adicionar/Editar endpoint") {
@@ -30,124 +27,123 @@ class EndpointSpecView : View("Adicionar Endpoint") {
 
                 textfield {
                     hgrow = Priority.ALWAYS
-                    text = "${endpointSpec.value.id}"
+                    text = "${EndpointSpecAdapter.selectedSpec.value.id}"
                     isEditable = false
                     isDisable = true
                     parentWidthProperty.onChange { parentWidth -> prefWidth = parentWidth * .1f }
-                    endpointSpec.onChange { endpoint -> text = "${endpoint?.id.valueOr(1)}" }
+
+                    bind(EndpointSpecAdapter.idProperty)
                 }
 
-                combobox<String> {
+                combobox<EndpointSpec> {
                     maxWidth = Double.MAX_VALUE
-
                     parentWidthProperty.onChange { parentWidth -> prefWidth = parentWidth * .9f }
-                    val list = observableList(*apiSpec.value.endpoints.toTypedArray())
-                    apiSpec.onChange { list.setAll(it?.endpoints.orEmpty()) }
-                    list.onChange { items = list.map { endpoint -> "${endpoint.url} - ${endpoint.method}" }.observable() }
+
+                    converter = object : StringConverter<EndpointSpec>() {
+                        override fun toString(spec: EndpointSpec): String {
+                            return "${spec.url} - ${spec.method}"
+                        }
+
+                        override fun fromString(string: String): EndpointSpec {
+                            return EndpointSpecAdapter.selectedSpec.value
+                        }
+                    }
+
+                    val initialData = apiSpecRepository.loadedApiSpec.endpoints
+                    val list = observableList(*initialData.toTypedArray())
+                    ApiSpecAdapter.endpointsProperty.onChange { endpointSpec -> list.setAll(endpointSpec.orEmpty()) }
+                    items = list
+                    bind(EndpointSpecAdapter.selectedSpec)
+                    setOnAction {
+                        val selected = EndpointSpecAdapter.selectedSpec.value
+                        if (value != selected) EndpointSpecAdapter.selectedSpec.value = selected
+                    }
                 }
             }
 
             field("Url") {
                 textfield {
                     hgrow = Priority.ALWAYS
-                    bind(endpointSpec.bidirectionalMap(EndpointSpec::url) {
-                        endpointSpec.value.copy(url = it)
-                    })
+
+                    bind(EndpointSpecAdapter.urlProperty)
                 }
             }
 
             field("Valores da Url") {
                 textarea {
                     prefRowCount = 3
-                    bind(endpointSpec.bidirectionalMap(EndpointSpec::values) {
-                        endpointSpec.value.copy(values = it)
-                    })
+
+                    bind(EndpointSpecAdapter.valuesProperty)
                 }
             }
 
             field("Descrição") {
                 textfield {
-                    bind(endpointSpec.bidirectionalMap(EndpointSpec::description) {
-                        endpointSpec.value.copy(description = it)
-                    })
+                    bind(EndpointSpecAdapter.descriptionProperty)
                 }
             }
 
             field("Observações") {
                 textfield {
-                    bind(endpointSpec.bidirectionalMap(EndpointSpec::observations) {
-                        endpointSpec.value.copy(observations = it)
-                    })
+                    bind(EndpointSpecAdapter.observationsProperty)
                 }
             }
 
             field("Método") {
                 textfield {
-                    bind(endpointSpec.bidirectionalMap(EndpointSpec::method) {
-                        endpointSpec.value.copy(method = it)
-                    })
+                    bind(EndpointSpecAdapter.methodProperty)
                 }
             }
 
             field("Corpo da requisição") {
                 textfield {
-                    bind(endpointSpec.bidirectionalMap(EndpointSpec::body) {
-                        endpointSpec.value.copy(body = it)
-                    })
+                    bind(EndpointSpecAdapter.bodyProperty)
                 }
             }
 
             field("Tipo do corpo da requisição") {
                 textfield {
-                    bind(endpointSpec.bidirectionalMap(EndpointSpec::bodyType) {
-                        endpointSpec.value.copy(bodyType = it)
-                    })
+                    bind(EndpointSpecAdapter.bodyTypeProperty)
                 }
             }
 
             field("Corpo da resposta") {
                 textfield {
-                    bind(endpointSpec.bidirectionalMap(EndpointSpec::response) {
-                        endpointSpec.value.copy(response = it)
-                    })
+                    bind(EndpointSpecAdapter.responseProperty)
                 }
             }
 
             hbox {
                 vbox { hgrow = Priority.ALWAYS }
-                actionButton("gmi-add", "#2f8417") { clearEndpointSpec() }
-                actionButton("gmi-remove", "#e3000f") { removeEndpointSpec() }
-                actionButton("gmi-check", "#0d74bd") { saveEndpointSpec() }
+                actionButton("Adicionar", "#2f8417") { clearEndpointSpec() }
+                actionButton("Remover", "#e3000f") { removeEndpointSpec() }
+                actionButton("Salvar", "#0d74bd") { saveEndpointSpec() }
             }
         }
     }
 
-    private fun HBox.actionButton(iconName: String, bgColor: String, onAction: () -> Unit) {
-        val buttonIcon = FontIcon(iconName).apply { iconColor = Paint.valueOf("#fff") }
-        button(graphic = buttonIcon) {
+    private fun HBox.actionButton(buttonText: String, bgColor: String, onAction: () -> Unit) {
+        button(buttonText) {
             spacing = 10.0
             action(onAction)
-            setPrefSize(40.0, 40.0)
+            setPrefSize(100.0, 40.0)
+
+            textFill = Color.valueOf("fff")
             background = Background(BackgroundFill(Color.valueOf(bgColor), CornerRadii(5.0), Insets.EMPTY))
         }
     }
 
     private fun removeEndpointSpec() {
-        val oldEndpoints = apiSpec.value.endpoints
-        val entryId = endpointSpec.value.id
-        val newEndpoints = oldEndpoints.filterNot { it.id == entryId }
-
-        apiSpec.value = apiSpec.value.copy(endpoints = newEndpoints)
+        apiSpecRepository.removeEndpointSpec(EndpointSpecAdapter.selectedSpec.value.id)
         clearEndpointSpec()
     }
 
     private fun saveEndpointSpec() {
-        val api = apiSpec.value
-        apiSpec.value = api.copy(endpoints = api.endpoints + endpointSpec.value)
+        apiSpecRepository.addEndpointSpec(EndpointSpecAdapter.selectedSpec.value)
         clearEndpointSpec()
     }
 
     private fun clearEndpointSpec() {
-        endpointSpec.value = EndpointSpec(id = apiSpec.value.nextEndpointSpecId())
+        EndpointSpecAdapter.selectedSpec.value = EndpointSpec(id = apiSpecRepository.loadedApiSpec.nextEndpointSpecId())
     }
 }

@@ -9,4 +9,6 @@ data class ApiSpec(
         val developmentServer: String = "",
         val notes: List<String> = emptyList(),
         val endpoints: List<EndpointSpec> = emptyList()
-)
+) {
+    companion object
+}

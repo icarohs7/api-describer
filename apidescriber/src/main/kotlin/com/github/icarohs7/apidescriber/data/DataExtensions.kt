@@ -1,5 +1,6 @@
 package com.github.icarohs7.apidescriber.data
 
+import arrow.core.Try
 import com.github.icarohs7.apidescriber.data.entities.ApiSpec
 import com.github.icarohs7.apidescriber.data.entities.EndpointSpec
 import com.github.icarohs7.apidescriber.domain.extensions.valueOr
@@ -15,6 +16,16 @@ fun ApiSpec.serialize(): String {
             .apply { indent = 4 }
 
     return Yaml(dumpOptions).dump(this.mapify())
+}
+
+/**
+ * Deserialize the given yaml string to
+ * an [ApiSpec] instance
+ */
+fun ApiSpec.Companion.deserialize(serializedSpec: String): Try<ApiSpec> {
+    return Try {
+        Yaml().load<ApiSpec>(serializedSpec)
+    }
 }
 
 /**
@@ -40,6 +51,16 @@ fun ApiSpec.nextEndpointSpecId(): Int {
             .max()
             .valueOr(0)
             .plus(1)
+}
+
+/**
+ * Create a new instance of an [EndpointSpec]
+ * without adding it to the [ApiSpec], but using
+ * the next valid ID to be assigned to a spec
+ */
+fun ApiSpec.newEndpointSpec(): EndpointSpec {
+    val id = nextEndpointSpecId()
+    return EndpointSpec(id = id)
 }
 
 /**

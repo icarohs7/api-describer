@@ -14,4 +14,6 @@ data class EndpointSpec(
         val body: String = "",
         val bodyType: String = "",
         val response: String = ""
-)
+) {
+    companion object
+}
