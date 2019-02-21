@@ -7,6 +7,8 @@ compileKotlin {
 }
 
 dependencies {
+    api(Deps.arrowCore)
+    api(Deps.arrowTypeclasses)
     api(Deps.coroutinesRx2)
     api(Deps.koinCore)
     api(Deps.kotlinStdLib)
