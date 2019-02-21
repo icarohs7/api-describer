@@ -1,8 +1,5 @@
-allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven { url("https://jitpack.io") }
-        jcenter()
-    }
+buildscript {
+    apply(from: "$rootDir/buildSrc/scripts/register-scripts-extra-props.gradle")
 }
+
+apply(from: projectsRepositories)
